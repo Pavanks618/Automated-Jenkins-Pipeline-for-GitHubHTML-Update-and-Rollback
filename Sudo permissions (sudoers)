@@ -1,0 +1,12 @@
+jenkins ALL=(ALL) NOPASSWD: /bin/apt update
+jenkins ALL=(ALL) NOPASSWD: /bin/apt install apache2 -y
+jenkins ALL=(ALL) NOPASSWD: /bin/cp /var/www/html/index.html /var/www/html/backup.html
+jenkins ALL=(ALL) NOPASSWD: /bin/rm /var/www/html/index.html
+jenkins ALL=(ALL) NOPASSWD: /bin/sudo cp index.html /var/www/html/
+jenkins ALL=(ALL) NOPASSWD: /bin/cp index.html /var/www/html/index.html
+jenkins ALL=(ALL) NOPASSWD: /bin/mv /var/www/html/index.html /var/www/html/backup.html
+jenkins ALL=(ALL) NOPASSWD: /bin/cp /var/www/html/backup.html /var/www/html/index.html
+jenkins ALL=(ALL) NOPASSWD: /bin/cp index.html /var/www/html/
+jenkins ALL=(ALL) NOPASSWD: /bin/apt install tidy -y
+
+Any command used in pipeline code should be pasted in this format to give sudo permissions in /etc/sudoers
