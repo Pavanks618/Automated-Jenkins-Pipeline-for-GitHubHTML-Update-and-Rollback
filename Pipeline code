@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git 'https://github.com/Pavanks618/website.git'
+            }
+        }
+        stage('Install Apache') {
+            steps {
+                sh 'sudo apt update'
+                sh 'sudo apt install apache2 -y'
+                sh 'sudo apt install tidy -y'
+            }
+        }
+        stage('Backup Default Index') {
+            steps {
+                sh 'sudo cp /var/www/html/index.html /var/www/html/backup.html'
+                sh 'sudo rm /var/www/html/index.html'
+            }
+        }
+        stage('Replace Index with Repository Version') {
+            steps {
+                sh 'sudo cp index.html /var/www/html/'
+            }
+        }
+        stage('Validate HTML Syntax') {
+            steps {
+                script {
+                    def validationResult = sh(script: 'tidy -q index.html', returnStatus: true)
+                    if (validationResult != 0) {
+                        currentBuild.result = 'FAILURE' // Mark the build as failed
+                        echo 'HTML validation failed. Reverting to the previous version.'
+                        sh 'sudo cp /var/www/html/backup.html /var/www/html/index.html'
+                    } else {
+                        echo 'HTML validation successful. Updating backup page.'
+                        sh 'sudo cp /var/www/html/index.html /var/www/html/backup.html'
+                    }
+                }
+            }
+        }
+    }
+}
